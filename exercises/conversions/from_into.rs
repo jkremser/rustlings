@@ -33,10 +33,33 @@ impl Default for Person {
 // If while parsing the age, something goes wrong, then return the default of Person
 // Otherwise, then return an instantiated Person object with the results
 
-// I AM NOT DONE
 
 impl From<&str> for Person {
+    
+
     fn from(s: &str) -> Person {
+
+        fn parse(s: &str) -> Result<Person, &str> {
+            if s.len() == 0 {
+                Err("empty string")
+            } else {
+               let chunks: Vec<&str> = s.split(",").collect();
+               if chunks.len() != 2 || chunks[0].len() == 0 || chunks[1].len() == 0 {
+                   return Err("wrong format: ")
+               }
+               let name = chunks[0];
+               let age_str = chunks[1];
+               let age = String::from(age_str).parse::<usize>();
+               if let Ok(a) = age {
+                   Ok(Person{name:name.into(), age:a})
+               } else {
+                   Err("cannot parse string to int")
+               }
+            }
+        }
+
+        let person: Result<Person, &str> = parse(s);
+        person.unwrap_or_else(|_| Person::default())
     }
 }
 
